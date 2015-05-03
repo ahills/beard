@@ -1,0 +1,83 @@
+.TH BEARD 8 beard
+.SH NAME
+beard \- Bear Hibernation Daemon
+.SH SYNOPSIS
+.B beard
+.RB [ \-h ]
+.RB [ \-v ]
+.RB [ \-p
+.IR PIDFILE ]
+.RB [ \-s
+.IR SUPPLY ]
+.RB [ \-H
+.IR HIBERNATE ]
+.SH DESCRIPTION
+.B beard
+is a simple hibernation daemon. By default, it will check the information in
+.BR /sys/class/power_supply/BAT0
+every three minutes and run
+.BR /usr/bin/pm-hibernate
+when the remaining energy in the battery falls to 3% of its full capacity or
+below. A battery check can be triggered by sending the
+.BR HUP
+signal to the process.
+.SH OPTIONS
+.TP
+.B \-h
+prints usage information to stderr and exits
+.TP
+.BI \-H " HIBERNATE"
+sets the path to the system hibernate command (default '/usr/bin/pm-hibernate')
+.TP
+.BI \-p " PIDFILE"
+sets the path to the daemon's PID file (no default)
+.TP
+.BI \-P " PERIOD"
+sets the time in seconds to sleep between actions (default '180')
+.TP
+.BI \-s " SUPPLY"
+sets the path to the Linux kernel power_supply source (default '/sys/class/power_supply/BAT0')
+.TP
+.BI \-t " THRESHOLD"
+sets the percent battery remaining at which to hibernate the system (default '3')
+.TP
+.B \-v
+verbose output
+.SH CUSTOMIZATION
+.B beard
+can be customized through the environment using the following variables:
+.TP
+.B BEARD_HIBERNATE
+path to the system hibernate command; equivalent to
+.I \-H
+above
+.TP
+.B BEARD_PIDFILE
+path to the daemon's PID file; equivalent to
+.I \-p
+above
+.TP
+.B BEARD_PERIOD
+time in seconds to sleep between actions; equivalent to
+.I \-P
+above
+.TP
+.B BEARD_SUPPLY
+path to the Linux kernel power_supply source; equivalent to
+.I \-s
+above
+.TP
+.B BEARD_THRESHOLD
+percent battery remaining at which to hibernate the system; equivalent to
+.I \-t
+above
+.RE
+.PP
+Command line options will override configuration through the environment.
+.SH AUTHORS
+Andrew Hills <ahills@ednos.net>
+.SH LICENSE
+See the LICENSE file for the terms of redistribution.
+.SH BUGS
+Please report them.
+

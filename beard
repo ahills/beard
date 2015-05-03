@@ -1,0 +1,98 @@
+#!/bin/sh
+# Author: Andrew Hills <ahills@ednos.net>
+# Public Domain (see http://unlicense.org)
+
+pn="`basename $0`"
+
+supply="${BEARD_SUPPLY:-/sys/class/power_supply/BAT0}"
+pidfile="${BEARD_PIDFILE}"
+period="${BEARD_PERIOD:-180}"
+hibernate="${BEARD_HIBERNATE:-/usr/bin/pm-hibernate}"
+threshold="${BEARD_THRESHOLD:-3}"
+v=
+
+usage() {
+    cat >&2 <<EOF
+usage: $pn [-h] [-v] [-p PIDFILE] [-s SUPPLY] [-H HIBERNATE] [-t THRESHOLD] [-P PERIOD]
+EOF
+    exit 1
+}
+
+log() {
+    logger -p "$1" "$2"
+    [ "$v" = 1 ] && echo "$2" >&2
+}
+
+while getopts "hH:p:P:qs:t:v" opt; do
+    echo "OPT[$OPTIND] $opt $OPTARG"
+    case "$opt" in
+        h|\?) usage ;;
+        H) hibernate="$OPTARG" ;;
+        p) pidfile="$OPTARG" ;;
+        P) period="$OPTARG" ;;
+        q) v= ;;
+        s) supply="$OPTARG" ;;
+        t) threshold="$OPTARG" ;;
+        v) v=1 ;;
+    esac
+done
+shift $(( $OPTIND - 1 ))
+[ "$#" -gt 0 ] && usage
+
+present="$supply/present"
+status="$supply/status"
+now="$supply/energy_now"
+full="$supply/energy_full"
+sleeper_pid=
+
+[ -n "$pidfile" ] && echo $$ > "$pidfile"
+
+is_present() {
+    [ "`cat "$present"`" = 1 ]
+}
+
+is_discharging() {
+    [ "`cat "$status"`" = Discharging ]
+}
+
+is_below_threshold() {
+        energy_now="`cat "$now"`"
+        energy_full="`cat "$full"`"
+        if [ "$energy_full" -eq 0 ]; then
+            log daemon.error "Battery at '$supply' has no capacity; sleeping"
+            return 1;
+        fi
+        energy_pct=$(( $energy_now * 100 / $energy_full ))
+        [ "$energy_pct" -le "$threshold" ]
+}
+
+nap() {
+    sleep "$period" &
+    sleeper_pid="$!"
+    wait
+    sleeper_pid=
+}
+
+hibernate() {
+    log daemon.notice "Battery critical (below $threshold%); hibernating"
+    $hibernate
+}
+
+event_check() {
+    [ -n "$sleeper_pid" ] && kill "$sleeper_pid"
+}
+
+trap event_check HUP
+
+while :; do
+    [ "$v" = 1 ] && echo 'Waiting for battery presence' >&2
+    while ! is_present || ! is_discharging; do
+        nap
+    done
+    [ "$v" = 1 ] && echo 'Monitoring battery' >&2
+    while is_present && is_discharging; do
+        is_below_threshold && hibernate
+        nap
+    done
+done
+
