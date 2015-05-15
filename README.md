@@ -55,3 +55,4 @@ with its corresponding command line option, default value, and effect.
 The power supply directory should contain the (virtual) files `present`,
 `status`, `energy_now`, and `energy_full`.
 
+Copyright © 2015 Andrew Hills. See LICENSE for details.
