@@ -7,9 +7,9 @@ RUNDIR = /run
 all: install openrc
 
 install: beard beard.8
-	mkdir -p $(PREFIX)/bin && \
-		cp beard $(PREFIX)/bin && \
-		chmod 755 $(PREFIX)/bin/beard
+	mkdir -p $(PREFIX)/sbin && \
+		cp beard $(PREFIX)/sbin && \
+		chmod 755 $(PREFIX)/sbin/beard
 	mkdir -p $(MANPREFIX)/man8 && \
 		cp beard.8 $(MANPREFIX)/man8/beard.8 && \
 		chmod 644 $(MANPREFIX)/man8/beard.8

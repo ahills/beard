@@ -2,7 +2,7 @@
 # Author: Andrew Hills <ahills@ednos.net>
 # Public Domain (see http://unlicense.org)
 
-command=%%PREFIX%%/bin/beard
+command=%%PREFIX%%/sbin/beard
 pidfile=%%RUNDIR%%/beard.pid
 command_args=
 command_background=yes
