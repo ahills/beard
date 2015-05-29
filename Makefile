@@ -1,8 +1,8 @@
 PREFIX = /usr/local
 MANPREFIX = $(PREFIX)/share/man
-CONFDIR = $(PREFIX)/etc/conf.d
-INITDIR = $(PREFIX)/etc/init.d
-RUNDIR = /run
+CONFDIR = /etc/conf.d
+INITDIR = /etc/init.d
+RUNDIR = /var/run
 
 all: install openrc
 
