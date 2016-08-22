@@ -24,7 +24,6 @@ log() {
 }
 
 while getopts "hH:p:P:qs:t:v" opt; do
-    echo "OPT[$OPTIND] $opt $OPTARG"
     case "$opt" in
         h|\?) usage ;;
         H) hibernate="$OPTARG" ;;
