@@ -19,7 +19,7 @@ EOF
 }
 
 log() {
-    logger -p "$1" "$2"
+    logger -t "$pn" -p "$1" "$2"
     [ "$v" = 1 ] && echo "$2" >&2
 }
 
