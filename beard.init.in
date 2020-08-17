@@ -1,4 +1,4 @@
-#!/sbin/runscript
+#!/sbin/openrc-run
 # Author: Andrew Hills <ahills@ednos.net>
 # Public Domain (see http://unlicense.org)
 
